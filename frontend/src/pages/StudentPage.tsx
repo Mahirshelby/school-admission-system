@@ -222,7 +222,7 @@ function StudentDashboard({ studentId, onSwitch }: DashboardProps) {
                   <h3>{cls.name}</h3>
                   <p className="st-muted">{cls.shiftName} shift</p>
                   <p className="st-seats">
-                    <strong>{cls.availableSeats}</strong> of {cls.totalSeats} seats available
+                    <strong>{cls.availableSeats}</strong> of {cls.totalSeats} seats available<span className="st-meter"><span style={{ width: `${((cls.totalSeats - cls.availableSeats) / cls.totalSeats) * 100}%` }} /></span>
                   </p>
                   <button
                     type="button"
@@ -290,3 +290,4 @@ export function StudentPage() {
   if (!studentId) return <RegistrationForm onSubmit={save} />;
   return <StudentDashboard studentId={studentId} onSwitch={clear} />;
 }
+
