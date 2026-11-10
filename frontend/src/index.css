@@ -70,3 +70,25 @@ th { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-s
   .topbar { padding: 10px 12px; gap: 12px; }
   .page { padding: 16px 12px 48px; }
 }
+
+/* ---------- Student page and shared dialog/badge styles ---------- */
+.st-btn { border: 1px solid transparent; border-radius: 8px; padding: 0.55rem 1rem; font: inherit; font-weight: 600; cursor: pointer; }
+.st-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.st-btn-primary { background: #2563eb; color: #fff; }
+.st-btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.st-btn-ghost { background: #fff; color: #374151; border-color: #d1d5db; }
+.st-btn-ghost:hover:not(:disabled) { background: #f3f4f6; }
+.st-btn-danger { background: #dc2626; color: #fff; }
+.st-btn-danger:hover:not(:disabled) { background: #b91c1c; }
+
+.st-badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em; }
+.st-badge-held { background: #fef3c7; color: #92400e; }
+.st-badge-confirmed { background: #d1fae5; color: #065f46; }
+.st-badge-cancelled { background: #e5e7eb; color: #374151; }
+.st-badge-expired { background: #fee2e2; color: #991b1b; }
+
+.st-backdrop { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.55); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+.st-dialog { background: #fff; border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 420px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); }
+.st-dialog h2 { margin: 0 0 0.5rem; font-size: 1.15rem; }
+.st-dialog p { margin: 0 0 1.25rem; color: #4b5563; }
+.st-dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
