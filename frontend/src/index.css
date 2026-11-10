@@ -92,3 +92,40 @@ th { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-s
 .st-dialog h2 { margin: 0 0 0.5rem; font-size: 1.15rem; }
 .st-dialog p { margin: 0 0 1.25rem; color: #4b5563; }
 .st-dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+
+/* ---------- Student page layout ---------- */
+.st-page { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+.st-page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.st-page-head h1, .st-register h1 { margin: 0 0 0.25rem; font-size: 1.6rem; }
+.st-section { margin-bottom: 2rem; }
+.st-section h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
+.st-muted { color: #6b7280; font-size: 0.9rem; margin: 0; }
+.st-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; }
+.st-empty { background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 12px; padding: 1.5rem; text-align: center; color: #6b7280; margin: 0; }
+.st-alert { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 0.75rem; }
+.st-error { color: #b91c1c; margin: 0; font-size: 0.9rem; }
+
+.st-register { max-width: 440px; margin: 2rem auto; display: flex; flex-direction: column; gap: 0.6rem; }
+.st-register p { margin: 0 0 0.5rem; }
+.st-register label { font-weight: 600; font-size: 0.9rem; }
+.st-register input { font: inherit; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 8px; letter-spacing: 0.05em; }
+.st-register input:focus { outline: 2px solid #93c5fd; border-color: #2563eb; }
+
+.st-class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.st-class-card { display: flex; flex-direction: column; gap: 0.4rem; }
+.st-class-card h3 { margin: 0; font-size: 1.05rem; }
+.st-class-card .st-btn { margin-top: 0.5rem; }
+.st-seats { margin: 0.25rem 0 0; }
+
+.st-hold-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.st-hold { display: grid; grid-template-columns: 1.4fr 1.6fr auto; gap: 1rem; align-items: center; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem 1.25rem; }
+.st-hold-expired { background: #fef2f2; border-color: #fecaca; }
+.st-hold-main, .st-hold-status { display: flex; flex-direction: column; gap: 0.25rem; align-items: flex-start; }
+.st-hold-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; }
+.st-timer { font-variant-numeric: tabular-nums; font-weight: 700; color: #92400e; }
+.st-expired-note { color: #991b1b; font-size: 0.9rem; font-weight: 600; }
+
+@media (max-width: 720px) {
+  .st-hold { grid-template-columns: 1fr; }
+  .st-hold-actions { justify-content: flex-start; }
+}
