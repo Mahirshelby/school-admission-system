@@ -196,3 +196,8 @@ body { background: transparent; }
   table td:nth-child(7)::before { content: "Filled"; }
   table td .bar { width: 140px; }
 }
+
+@media (max-width: 640px) {
+  table { min-width: 0; }
+  .table-wrap { overflow-x: visible; }
+}
