@@ -63,12 +63,12 @@ interface HoldRowProps {
 }
 
 function HoldRow({ hold, busy, onPay, onCancel }: HoldRowProps) {
-  const remaining = useCountdown(hold.status === 'Held' ? hold.expiresAt : null);
+  const remaining = useCountdown(hold.status === 'HELD' ? hold.expiresAt : null);
   // The server flips Held to Expired on its next read; the page does not wait for that.
-  const status: HoldStatus = hold.status === 'Held' && remaining === 0 ? 'Expired' : hold.status;
-  const isHeld = status === 'Held';
-  const isExpired = status === 'Expired';
-  const isConfirmed = status === 'Confirmed';
+  const status: HoldStatus = hold.status === 'HELD' && remaining === 0 ? 'EXPIRED' : hold.status;
+  const isHeld = status === 'HELD';
+  const isExpired = status === 'EXPIRED';
+  const isConfirmed = status === 'CONFIRMED';
 
   return (
     <li className={`st-hold st-hold-${status.toLowerCase()}`}>
@@ -87,7 +87,7 @@ function HoldRow({ hold, busy, onPay, onCancel }: HoldRowProps) {
         {isConfirmed && hold.confirmedAt && (
           <span className="st-muted">Confirmed {formatDate(hold.confirmedAt)}</span>
         )}
-        {status === 'Cancelled' && hold.cancelledAt && (
+        {status === 'CANCELLED' && hold.cancelledAt && (
           <span className="st-muted">Cancelled {formatDate(hold.cancelledAt)}</span>
         )}
       </div>
@@ -100,7 +100,7 @@ function HoldRow({ hold, busy, onPay, onCancel }: HoldRowProps) {
             disabled={busy || isExpired}
             onClick={() => onPay(hold)}
           >
-            {busy ? 'Processing payment...' : 'Pay admission fee'}
+            {busy ? 'Processing payment...' : 'ভর্তি ফি দিন'}
           </button>
         )}
         {(isHeld || isConfirmed) && (
@@ -137,7 +137,7 @@ function StudentDashboard({ studentId, onSwitch }: DashboardProps) {
   };
 
   const hasActiveHold = (classId: number) =>
-    holds.some((h) => h.classId === classId && (h.status === 'Held' || h.status === 'Confirmed'));
+    holds.some((h) => h.classId === classId && (h.status === 'HELD' || h.status === 'CONFIRMED'));
 
   const handleApply = async (cls: ClassDto) => {
     setApplyingId(cls.id);
@@ -153,11 +153,11 @@ function StudentDashboard({ studentId, onSwitch }: DashboardProps) {
   };
 
   const handlePay = async (hold: HoldDto) => {
-    setBusyHoldId(hold.id);
+    setBusyHoldId(hold.holdId);
     try {
       // Simulated payment: no real gateway, just a short wait before confirming.
       await new Promise((resolve) => setTimeout(resolve, PAYMENT_SIMULATION_MS));
-      await api.confirmHold(hold.id, studentId);
+      await api.confirmHold(hold.holdId, studentId);
       notify('success', 'Payment received. Your admission is confirmed.');
     } catch (err) {
       notify('error', getErrorMessage(err));
@@ -170,9 +170,9 @@ function StudentDashboard({ studentId, onSwitch }: DashboardProps) {
   const handleCancel = async () => {
     if (!pendingCancel) return;
     const hold = pendingCancel;
-    setBusyHoldId(hold.id);
+    setBusyHoldId(hold.holdId);
     try {
-      await api.cancelHold(hold.id, studentId);
+      await api.cancelHold(hold.holdId, studentId);
       notify('success', 'Application cancelled and the seat was released.');
     } catch (err) {
       notify('error', getErrorMessage(err));
@@ -257,9 +257,9 @@ function StudentDashboard({ studentId, onSwitch }: DashboardProps) {
           <ul className="st-hold-list">
             {holds.map((hold) => (
               <HoldRow
-                key={hold.id}
+                key={hold.holdId}
                 hold={hold}
-                busy={busyHoldId === hold.id}
+                busy={busyHoldId === hold.holdId}
                 onPay={(h) => void handlePay(h)}
                 onCancel={setPendingCancel}
               />
@@ -272,12 +272,12 @@ function StudentDashboard({ studentId, onSwitch }: DashboardProps) {
         open={pendingCancel !== null}
         title="Cancel this application?"
         message={
-          pendingCancel?.status === 'Confirmed'
+          pendingCancel?.status === 'CONFIRMED'
             ? 'Your admission is already confirmed. Cancelling will give up the seat and cannot be undone.'
             : 'Your held seat will be released and other students can take it.'
         }
         confirmLabel="Yes, cancel"
-        busy={busyHoldId !== null && busyHoldId === pendingCancel?.id}
+        busy={busyHoldId !== null && busyHoldId === pendingCancel?.holdId}
         onConfirm={() => void handleCancel()}
         onCancel={() => setPendingCancel(null)}
       />

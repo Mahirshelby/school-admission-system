@@ -1,4 +1,4 @@
-export type HoldStatus = 'Held' | 'Confirmed' | 'Cancelled' | 'Expired';
+﻿export type HoldStatus = 'HELD' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED';
 
 export interface ClassDto {
   id: number;
@@ -11,7 +11,7 @@ export interface ClassDto {
 }
 
 export interface HoldDto {
-  id: string;
+  holdId: string;
   classId: number;
   className: string;
   shiftName: string;
@@ -25,7 +25,7 @@ export interface HoldDto {
 
 export interface CreateClassRequest {
   name: string;
-  shiftName: string;
+  shiftName?: string;
   totalSeats: number;
 }
 
