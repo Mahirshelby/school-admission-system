@@ -174,3 +174,8 @@ body { background: transparent; }
 
 .st-meter { display: block; height: 8px; margin-top: 0.6rem; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
 .st-meter > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4f46e5, #06b6d4); transition: width 0.4s ease; }
+
+/* Toast position: top-center so it never covers action buttons */
+.toasts { top: 14px; bottom: auto; right: auto; left: 50%; transform: translateX(-50%); align-items: center; width: max-content; max-width: calc(100vw - 32px); }
+.toast { font-weight: 500; animation: toast-in 0.2s ease-out; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
