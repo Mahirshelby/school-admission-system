@@ -14,7 +14,7 @@ public record ClassDto(
     int AvailableSeats);
 
 public record HoldDto(
-    Guid Id,
+    Guid HoldId,
     int ClassId,
     string ClassName,
     string ShiftName,

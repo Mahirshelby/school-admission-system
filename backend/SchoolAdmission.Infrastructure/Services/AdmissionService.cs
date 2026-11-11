@@ -16,6 +16,7 @@ public class AdmissionService : IAdmissionService
 {
     private readonly AdmissionDbContext _db;
     private readonly TimeProvider _clock;
+    private const string DefaultShiftName = "General";
     private readonly AdmissionOptions _options;
 
     public AdmissionService(AdmissionDbContext db, TimeProvider clock, IOptions<AdmissionOptions> options)
@@ -30,12 +31,12 @@ public class AdmissionService : IAdmissionService
     public async Task<ClassDto> CreateClassAsync(CreateClassRequest request, CancellationToken ct)
     {
         var name = request.Name?.Trim();
-        var shiftName = request.ShiftName?.Trim();
+        var shiftName = string.IsNullOrWhiteSpace(request.ShiftName) ? DefaultShiftName : request.ShiftName.Trim();
 
         if (string.IsNullOrEmpty(name) || name.Length > 100)
             throw new BadRequestException("invalid_name", "Class name is required (max 100 characters).");
-        if (string.IsNullOrEmpty(shiftName) || shiftName.Length > 100)
-            throw new BadRequestException("invalid_shift", "Shift name is required (max 100 characters).");
+        if (shiftName.Length > 100)
+            throw new BadRequestException("invalid_shift", "Shift name must be at most 100 characters.");
         if (request.TotalSeats <= 0)
             throw new BadRequestException("invalid_seats", "Total seats must be greater than zero.");
 

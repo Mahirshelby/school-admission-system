@@ -52,7 +52,7 @@ public sealed class ApiHelper
         var response = await ApplyAsync(classId, studentId);
         response.EnsureSuccessStatusCode();
         var json = await ReadAsync(response);
-        return json.GetProperty("id").GetGuid();
+        return json.GetProperty("holdId").GetGuid();
     }
 
     public async Task<string?> HoldStatusAsync(Guid holdId, string studentId)

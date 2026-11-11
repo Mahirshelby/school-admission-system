@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using FluentAssertions;
 using SchoolAdmission.Tests.Support;
 
@@ -22,7 +22,7 @@ public class ConfirmationTests
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await ApiHelper.ReadAsync(response);
-        body.GetProperty("status").GetString().Should().Be("Confirmed");
+        body.GetProperty("status").GetString().Should().Be("CONFIRMED");
         body.GetProperty("confirmedAt").ValueKind.Should().NotBe(System.Text.Json.JsonValueKind.Null);
 
         var cls = await _api.GetClassAsync(classId);
@@ -45,7 +45,7 @@ public class ConfirmationTests
         second.StatusCode.Should().Be(HttpStatusCode.OK);
         var firstBody = await ApiHelper.ReadAsync(first);
         var secondBody = await ApiHelper.ReadAsync(second);
-        secondBody.GetProperty("status").GetString().Should().Be("Confirmed");
+        secondBody.GetProperty("status").GetString().Should().Be("CONFIRMED");
         secondBody.GetProperty("confirmedAt").GetDateTimeOffset()
             .Should().BeCloseTo(firstBody.GetProperty("confirmedAt").GetDateTimeOffset(), TimeSpan.FromMilliseconds(1)); // Postgres keeps microseconds, .NET keeps 100 ns
 
@@ -72,7 +72,7 @@ public class ConfirmationTests
             (await ApiHelper.ReadErrorCodeAsync(response)).Should().Be("not_your_hold");
         }
         // The owner's hold is untouched.
-        (await _api.HoldStatusAsync(holdId, owner)).Should().Be("Held");
+        (await _api.HoldStatusAsync(holdId, owner)).Should().Be("HELD");
     }
 
     [Fact]

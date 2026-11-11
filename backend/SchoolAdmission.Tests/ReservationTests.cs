@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using FluentAssertions;
 using SchoolAdmission.Tests.Support;
 
@@ -21,7 +21,7 @@ public class ReservationTests
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var hold = await ApiHelper.ReadAsync(response);
-        hold.GetProperty("status").GetString().Should().Be("Held");
+        hold.GetProperty("status").GetString().Should().Be("HELD");
         hold.GetProperty("studentId").GetString().Should().Be(studentId);
         var lifetime = hold.GetProperty("expiresAt").GetDateTimeOffset() - hold.GetProperty("createdAt").GetDateTimeOffset();
         lifetime.Should().Be(TimeSpan.FromSeconds(ApiFixture.HoldDurationSeconds));

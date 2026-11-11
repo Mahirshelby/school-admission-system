@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using FluentAssertions;
 using SchoolAdmission.Tests.Support;
 
@@ -31,7 +31,7 @@ public class ExpiryTests
 
         _fixture.Clock.Advance(PastExpiry);
 
-        (await _api.HoldStatusAsync(holdId, first)).Should().Be("Expired");
+        (await _api.HoldStatusAsync(holdId, first)).Should().Be("EXPIRED");
         var cls = await _api.GetClassAsync(classId);
         cls.GetProperty("heldSeats").GetInt32().Should().Be(0);
         cls.GetProperty("availableSeats").GetInt32().Should().Be(1);
@@ -52,7 +52,7 @@ public class ExpiryTests
 
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
         (await ApiHelper.ReadErrorCodeAsync(response)).Should().Be("hold_expired");
-        (await _api.HoldStatusAsync(holdId, studentId)).Should().Be("Expired");
+        (await _api.HoldStatusAsync(holdId, studentId)).Should().Be("EXPIRED");
         var cls = await _api.GetClassAsync(classId);
         cls.GetProperty("confirmedSeats").GetInt32().Should().Be(0);
         cls.GetProperty("availableSeats").GetInt32().Should().Be(3);
@@ -68,7 +68,7 @@ public class ExpiryTests
 
         _fixture.Clock.Advance(PastExpiry);
 
-        (await _api.HoldStatusAsync(holdId, studentId)).Should().Be("Confirmed");
+        (await _api.HoldStatusAsync(holdId, studentId)).Should().Be("CONFIRMED");
         var cls = await _api.GetClassAsync(classId);
         cls.GetProperty("confirmedSeats").GetInt32().Should().Be(1);
     }

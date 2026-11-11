@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using FluentAssertions;
 using SchoolAdmission.Tests.Support;
 
@@ -26,10 +27,10 @@ public class CancellationTests
 
         var cancel = await _api.CancelAsync(holdId, first);
 
-        cancel.StatusCode.Should().Be(HttpStatusCode.OK);
-        var body = await ApiHelper.ReadAsync(cancel);
-        body.GetProperty("status").GetString().Should().Be("Cancelled");
-        body.GetProperty("cancelledAt").ValueKind.Should().NotBe(System.Text.Json.JsonValueKind.Null);
+        cancel.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var hold = await ApiHelper.ReadAsync(await _api.GetHoldAsync(holdId, first));
+        hold.GetProperty("status").GetString().Should().Be("CANCELLED");
+        hold.GetProperty("cancelledAt").ValueKind.Should().NotBe(JsonValueKind.Null);
         (await _api.ApplyAsync(classId, second)).StatusCode.Should().Be(HttpStatusCode.Created);
     }
 
@@ -40,11 +41,11 @@ public class CancellationTests
         var studentId = ApiHelper.NewStudentId();
         var holdId = await _api.ApplyAndGetIdAsync(classId, studentId);
 
-        (await _api.CancelAsync(holdId, studentId)).StatusCode.Should().Be(HttpStatusCode.OK);
+        (await _api.CancelAsync(holdId, studentId)).StatusCode.Should().Be(HttpStatusCode.NoContent);
         var again = await _api.CancelAsync(holdId, studentId);
 
-        again.StatusCode.Should().Be(HttpStatusCode.OK);
-        (await ApiHelper.ReadAsync(again)).GetProperty("status").GetString().Should().Be("Cancelled");
+        again.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        (await _api.HoldStatusAsync(holdId, studentId)).Should().Be("CANCELLED");
     }
 
     [Fact]
@@ -57,7 +58,7 @@ public class CancellationTests
 
         var cancel = await _api.CancelAsync(holdId, studentId);
 
-        cancel.StatusCode.Should().Be(HttpStatusCode.OK);
+        cancel.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var cls = await _api.GetClassAsync(classId);
         cls.GetProperty("confirmedSeats").GetInt32().Should().Be(0);
         cls.GetProperty("availableSeats").GetInt32().Should().Be(1);
@@ -95,7 +96,7 @@ public class CancellationTests
         items.Should().HaveCount(2);
         items[0].GetProperty("classId").GetInt32().Should().Be(secondClass);
         items[1].GetProperty("classId").GetInt32().Should().Be(firstClass);
-        items[1].GetProperty("status").GetString().Should().Be("Cancelled");
+        items[1].GetProperty("status").GetString().Should().Be("CANCELLED");
 
         var other = await _api.MyHoldsAsync(ApiHelper.NewStudentId());
         (await ApiHelper.ReadAsync(other)).GetArrayLength().Should().Be(0);

@@ -30,7 +30,7 @@ builder.Services.AddHostedService<HoldExpirySweeper>();
 
 builder.Services
     .AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.SnakeCaseUpper)))
     .ConfigureApiBehaviorOptions(o =>
     {
         // Bad or missing request bodies return our standard error shape.

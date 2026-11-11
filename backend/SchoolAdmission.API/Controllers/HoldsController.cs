@@ -15,7 +15,7 @@ public class HoldsController : ControllerBase
         [FromHeader(Name = StudentHeader)] string? studentId, CancellationToken ct)
     {
         var dto = await _service.CreateHoldAsync(classId, studentId, ct);
-        return Created($"/holds/{dto.Id}", dto);
+        return Created($"/holds/{dto.HoldId}", dto);
     }
 
     [HttpGet("/holds/{holdId:guid}")]
@@ -30,8 +30,11 @@ public class HoldsController : ControllerBase
 
     [HttpDelete("/holds/{holdId:guid}")]
     public async Task<IActionResult> Cancel(Guid holdId,
-        [FromHeader(Name = StudentHeader)] string? studentId, CancellationToken ct) =>
-        Ok(await _service.CancelHoldAsync(holdId, studentId, ct));
+        [FromHeader(Name = StudentHeader)] string? studentId, CancellationToken ct)
+    {
+        await _service.CancelHoldAsync(holdId, studentId, ct);
+        return NoContent();
+    }
 
     [HttpGet("/me/holds")]
     public async Task<IActionResult> Mine(
