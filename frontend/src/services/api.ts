@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 import type { ApiError, ClassDto, CreateClassRequest, HoldDto } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
@@ -21,6 +21,7 @@ export const api = {
     http.post<HoldDto>(`/holds/${holdId}/confirm`, null, asStudent(studentId)).then((r) => r.data),
   cancelHold: (holdId: string, studentId: string) =>
     http.delete(`/holds/${holdId}`, asStudent(studentId)).then(() => undefined),
+  listAllHolds: () => http.get<HoldDto[]>('/admin/holds').then((r) => r.data),
   myHolds: (studentId: string) => http.get<HoldDto[]>('/me/holds', asStudent(studentId)).then((r) => r.data),
 };
 

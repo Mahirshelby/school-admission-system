@@ -1,4 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { StatusBadge } from '../components/StatusBadge';
+import type { HoldDto } from '../types';
 import { StatCard } from '../components/StatCard';
 import { useClasses } from '../hooks/useClasses';
 import { useToast } from '../hooks/toastContext';
@@ -7,6 +9,20 @@ import { api, getErrorMessage } from '../services/api';
 export function AdminPage() {
   const { classes, error, loading, reload } = useClasses();
   const { notify } = useToast();
+
+  const [holds, setHolds] = useState<HoldDto[] | null>(null);
+  const [holdsError, setHoldsError] = useState<string | null>(null);
+  const loadHolds = useCallback(async () => {
+    try {
+      setHolds(await api.listAllHolds());
+      setHoldsError(null);
+    } catch (err) {
+      setHoldsError(getErrorMessage(err));
+    }
+  }, []);
+  useEffect(() => {
+    void loadHolds();
+  }, [loadHolds]);
 
   const [name, setName] = useState('');
   const [shiftName, setShiftName] = useState('');
@@ -41,6 +57,7 @@ export function AdminPage() {
       setShiftName('');
       setSeats('');
       reload();
+      void loadHolds();
     } catch (err) {
       setFormError(getErrorMessage(err));
     } finally {
@@ -134,6 +151,34 @@ export function AdminPage() {
               </tbody>
             </table>
           </div>
+        )}
+      </section>
+
+      <section className="card">
+        <div className="card-head">
+          <h2>Applications</h2>
+          <button className="btn" onClick={() => void loadHolds()}>Refresh</button>
+        </div>
+        {holdsError && <div className="banner banner-error">{holdsError}</div>}
+        {holds && holds.length === 0 && <p className="muted">No applications yet.</p>}
+        {holds && holds.length > 0 && (
+          <ul className="app-list">
+            {holds.map((h) => (
+              <li key={h.holdId} className="app-item">
+                <div className="app-main">
+                  <strong>{h.className}</strong>
+                  <span className="muted">{h.shiftName} shift</span>
+                </div>
+                <div className="app-meta">
+                  <span>Student: {h.studentId}</span>
+                  <span>Applied: {new Date(h.createdAt).toLocaleString()}</span>
+                  {h.confirmedAt && <span>Confirmed: {new Date(h.confirmedAt).toLocaleString()}</span>}
+                  {h.cancelledAt && <span>Cancelled: {new Date(h.cancelledAt).toLocaleString()}</span>}
+                </div>
+                <StatusBadge status={h.status} />
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </div>
