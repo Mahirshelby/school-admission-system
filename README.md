@@ -149,3 +149,22 @@ A passing concurrency test is a sanity check, not a proof. Repeated green runs c
 - Both the Student page and the class list poll the API, so seat counts and hold status update without a page reload.
 - The Admin page does not auto-refresh. The Classes and Applications sections each have their own Refresh button.
 - The Admin create-class form still requires a shift value in the UI, although the backend makes it optional.
+
+## Verification
+
+Automated (real output, `dotnet test backend/SchoolAdmission.sln`): 28 tests passed, 0 failed. The tests run against a real PostgreSQL container.
+
+Manually checked in the browser with `docker compose up --build -d`:
+
+- Admin dashboard: class stats and the Classes table, and the Applications section (desktop and mobile width).
+- Student page: apply shows a `HELD` badge with a countdown and the Bengali pay button; paying shows `CONFIRMED`; cancelling shows a toast, `CANCELLED`, and the seat is released.
+- Expiry: with `HOLD_DURATION_SECONDS=20`, the hold showed a countdown, then `EXPIRED`, the pay button was disabled, and the seat came back. The value was then returned to 600.
+- API calls with PowerShell: create class, create hold, confirm, duplicate apply (409 `already_applied`), and `GET /me/holds` without the header (400).
+
+Not verified:
+
+- The duplicate-apply error message in the browser UI.
+- Student application history restoring after F5 or after closing the browser (the student id is kept in localStorage; this was not checked in the browser).
+- The background sweeper working on its own. The 20-second test only proved the read-time `EXPIRED` rule and the frontend state.
+- Two backend processes on different ports sharing one database.
+- A clean from-scratch run (`docker compose down -v`, then `up --build -d`).
