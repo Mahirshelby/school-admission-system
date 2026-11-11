@@ -122,3 +122,30 @@ Header `X-Student-Id` is required. Without it the API returns 400:
 ### GET /admin/holds
 
 No authentication (see ASSUMPTIONS.md). Returns every application, newest first, as an array of the same hold objects shown above.
+
+## Testing
+
+Docker must be running, because the integration tests start a real PostgreSQL container with Testcontainers. From the repository root:
+
+    dotnet test backend/SchoolAdmission.sln
+
+The test project uses xunit, WebApplicationFactory and FakeTimeProvider, and includes a concurrency test that sends many requests at the same time against a class with limited seats.
+
+## Concurrency strategy
+
+The guarantee that `held + confirmed` never exceeds `totalSeats` comes from the database, not from the tests:
+
+- Creating a hold runs inside a transaction that first locks the class row with `SELECT ... FOR UPDATE`. Concurrent requests for the same class therefore run one after another, and each one counts the current held and confirmed seats before taking a seat.
+- A partial unique index on holds `(student_id, class_id)` where status is `Held` or `Confirmed` stops a student from having more than one active application per class, even if two requests race.
+- Because the lock is in PostgreSQL, it applies to every backend process that uses the same database, not only to one process.
+
+A passing concurrency test is a sanity check, not a proof. Repeated green runs cannot prove the absence of a race; the row lock is what gives the guarantee. Two backend processes on different ports against the same database were not tested here.
+
+## Expiry and behaviour notes
+
+- A hold lasts `HOLD_DURATION_SECONDS` (default 600). A hold whose `expiresAt` has passed is reported as `EXPIRED` on every read, even before any cleanup runs.
+- A background sweeper runs every 5 seconds and marks overdue holds as expired in the database, so seats return without any API call.
+- Confirm and cancel are idempotent: repeating them does not change the seat count a second time.
+- Both the Student page and the class list poll the API, so seat counts and hold status update without a page reload.
+- The Admin page does not auto-refresh. The Classes and Applications sections each have their own Refresh button.
+- The Admin create-class form still requires a shift value in the UI, although the backend makes it optional.
