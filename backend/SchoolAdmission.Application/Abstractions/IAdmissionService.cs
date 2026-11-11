@@ -13,6 +13,7 @@ public interface IAdmissionService
     Task<HoldDto> ConfirmHoldAsync(Guid holdId, string? studentId, CancellationToken ct);
     Task<HoldDto> CancelHoldAsync(Guid holdId, string? studentId, CancellationToken ct);
     Task<IReadOnlyList<HoldDto>> GetMyHoldsAsync(string? studentId, CancellationToken ct);
+    Task<IReadOnlyList<HoldDto>> ListAllHoldsAsync(CancellationToken ct);
 
     // Background sweep: marks expired HELD rows as EXPIRED. Returns how many rows changed.
     Task<int> ExpireStaleHoldsAsync(CancellationToken ct);

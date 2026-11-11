@@ -244,6 +244,18 @@ public class AdmissionService : IAdmissionService
         return holds.Select(h => ToDto(h, h.Class.Name, h.Class.Shift.Name, now)).ToList();
     }
 
+    public async Task<IReadOnlyList<HoldDto>> ListAllHoldsAsync(CancellationToken ct)
+    {
+        var now = _clock.GetUtcNow();
+
+        var holds = await _db.Holds.AsNoTracking()
+            .Include(h => h.Class).ThenInclude(c => c.Shift)
+            .OrderByDescending(h => h.CreatedAt)
+            .ToListAsync(ct);
+
+        return holds.Select(h => ToDto(h, h.Class.Name, h.Class.Shift.Name, now)).ToList();
+    }
+
     public Task<int> ExpireStaleHoldsAsync(CancellationToken ct)
     {
         var now = _clock.GetUtcNow();
